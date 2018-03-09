@@ -1,0 +1,503 @@
+diff -ruw stubb_2.1/Makefile stubb_for_REforge/Makefile
+--- stubb_2.1/Makefile	2003-11-18 17:18:51.000000000 +0100
++++ stubb_for_REforge/Makefile	2018-03-07 17:38:56.814312917 +0100
+@@ -1,10 +1,10 @@
+-all: ss ms
++all: ss #ms
+ 
+ ss: Makefile.ss
+ 	make -f Makefile.ss
+ 
+-ms: Makefile.ms
+-	make -f Makefile.ms
++#ms: Makefile.ms
++#	make -f Makefile.ms
+ 
+ clean: 
+ 	rm -f *~ *.o core
+diff -ruw stubb_2.1/Makefile.ms stubb_for_REforge/Makefile.ms
+--- stubb_2.1/Makefile.ms	2003-11-18 17:18:51.000000000 +0100
++++ stubb_for_REforge/Makefile.ms	2018-03-07 16:45:11.115205169 +0100
+@@ -1,7 +1,7 @@
+ COMPILER = g++
+ BIN = bin/
+ LIBS =  -lm 
+-CCFLAGS = -O3 -D_MARKOV -DMARKOV_ORDER=2 -DCONTEXT_SIZE=5 -D_OPTIMIZE_MOTIFORIENTATION -D_OPTIMIZE_PROTECTED_ACCESS  -D_OPTIMIZE_CAREFULCSP -D_OPTIMIZE_WMINDEX -D_MULTIPLE_SEQUENCES -D_MEMORY_HACK #-D_WTMX_BIAS
++CCFLAGS = -O3 -D_MARKOV -DMARKOV_ORDER=2 -DCONTEXT_SIZE=5 -D_OPTIMIZE_MOTIFORIENTATION -D_OPTIMIZE_PROTECTED_ACCESS  -D_OPTIMIZE_CAREFULCSP -D_OPTIMIZE_WMINDEX -D_MULTIPLE_SEQUENCES -D_MEMORY_HACK -fpermissive #-D_WTMX_BIAS
+ STUBBMSCCFLAGS = -D_OPTIMIZE_CACHESEQUENCEPROBABILITIES -D_FIXED_WIDTH #-D_PRUNE_MOTIFS 
+ 
+ all:  clean stubbms stubbms_modifyalignments 
+diff -ruw stubb_2.1/Makefile.ss stubb_for_REforge/Makefile.ss
+--- stubb_2.1/Makefile.ss	2003-11-18 17:18:51.000000000 +0100
++++ stubb_for_REforge/Makefile.ss	2018-03-07 17:37:51.377700197 +0100
+@@ -3,26 +3,26 @@
+ BIN = bin/
+ LIBS =  -L${NEWMATDIR} -lm -lnewmat
+ GSLINC = -I${NEWMATDIR}
+-CCFLAGS = -O3 -D_MARKOV -DMARKOV_ORDER=2 -DCONTEXT_SIZE=5 -D_OPTIMIZE_MOTIFORIENTATION -D_OPTIMIZE_PROTECTED_ACCESS  -D_OPTIMIZE_CAREFULCSP -D_OPTIMIZE_WMINDEX -D_EXIST_SMALL_SEQUENCES -D_CYCLIC_WINDOWS #-D_WTMX_BIAS 
++CCFLAGS = -O3 -D_MARKOV -DMARKOV_ORDER=0 -DCONTEXT_SIZE=5 -D_OPTIMIZE_MOTIFORIENTATION -D_OPTIMIZE_PROTECTED_ACCESS  -D_OPTIMIZE_CAREFULCSP -D_OPTIMIZE_WMINDEX -D_EXIST_SMALL_SEQUENCES -D_CYCLIC_WINDOWS -fpermissive # -D_WTMX_BIAS
+ STUBBCCFLAGS = -D_OPTIMIZE_CACHESEQUENCEPROBABILITIES #-D_PRUNE_MOTIFS
+ STUBBH01CCFLAGS = -D_OPTIMIZE_CACHESEQUENCEPROBABILITIES 
+ 
+-all:  clean stubb stubbh01 stubbh01f stubb_fitprobs stubb_fixedprobs
++all:  clean stubb stubb_fitprobs stubb_fixedprobs # stubbh01 stubbh01f 
+ 
+ stubb: Makefile ${NEWMATDIR}/libnewmat.a stubb.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o
+-	${COMPILER} ${CCFLAGS} ${STUBBCCFLAGS} -o ${BIN}/stubb stubb.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o ${LIBS}
++	${COMPILER} ${CCFLAGS} ${STUBBCCFLAGS} -o ${BIN}/stubb_noPseudoCount stubb.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o ${LIBS}
+ 
+-stubbh01: Makefile stubbh01.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o
+-	${COMPILER} ${CCFLAGS} ${STUBBH01CCFLAGS} -o ${BIN}/stubbh01 stubbh01.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o ${LIBS} 
++# stubbh01: Makefile stubbh01.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o
++#	${COMPILER} ${CCFLAGS} ${STUBBH01CCFLAGS} -o ${BIN}/stubbh01 stubbh01.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o ${LIBS} 
+ 
+-stubbh01f: Makefile stubbh01f.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o
+-	${COMPILER} ${CCFLAGS} ${STUBBH01CCFLAGS} -o ${BIN}/stubbh01f stubbh01f.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o ${LIBS} 
++#stubbh01f: Makefile stubbh01f.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o
++#	${COMPILER} ${CCFLAGS} ${STUBBH01CCFLAGS} -o ${BIN}/stubbh01f stubbh01f.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o ${LIBS} 
+ 
+ stubb_fitprobs: Makefile ${NEWMATDIR}/libnewmat.a stubb_fitprobs.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o
+-	${COMPILER} ${CCFLAGS} ${STUBBCCFLAGS} -o ${BIN}/stubb_fitprobs stubb_fitprobs.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o ${LIBS}
++	${COMPILER} ${CCFLAGS} ${STUBBCCFLAGS} -o ${BIN}/stubb_fitprobs_noPseudoCount stubb_fitprobs.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o ${LIBS}
+ 
+ stubb_fixedprobs: Makefile ${NEWMATDIR}/libnewmat.a stubb_fixedprobs.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o
+-	${COMPILER} ${CCFLAGS} ${STUBBCCFLAGS} -o ${BIN}/stubb_fixedprobs stubb_fixedprobs.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o ${LIBS}
++	${COMPILER} ${CCFLAGS} ${STUBBCCFLAGS} -o ${BIN}/stubb_fixedprobs_noPseudoCount stubb_fixedprobs.cpp util.o parameters.o parameters_h0.o parameters_h1.o parameters_h01.o sequence.o windowiterator.o wtmx.o fastafile.o ${LIBS}
+ 
+ util.o: Makefile util.cpp util.h parameters.h typedefs.h parameters.o
+ 	${COMPILER} ${CCFLAGS} -c util.cpp
+diff -ruw stubb_2.1/parameters.h stubb_for_REforge/parameters.h
+--- stubb_2.1/parameters.h	2003-11-18 17:18:51.000000000 +0100
++++ stubb_for_REforge/parameters.h	2018-03-07 16:45:11.129204871 +0100
+@@ -42,7 +42,7 @@
+ 
+ #define BKG_FORWARD_ONLY 1
+ #define DEFAULT_BOTH_ORIENTATIONS true
+-#define ALMOSTONE 0.9
++#define ALMOSTONE 0.99
+ #define MOTIF_COUNT_THRESHOLD 1.0
+ #define DEFAULT_MOTIF_OCCURRENCE_THRESHOLD 0.1
+ #define DEFAULT_FEN_THRESHOLD 10
+@@ -69,6 +69,7 @@
+   bool           _is_initialized;
+   
+   DTYPE          _free_energy;
++  DTYPE          _free_energy_background;
+   DTYPE          _free_energy_differential;// Fb - F
+   DTYPE          _free_energy_perlength;
+   int            _num_iterations;
+@@ -185,7 +186,7 @@
+   int    _max_window_length;         // used for an optimization, set in Initialize()
+   Window *_currentWindow;            // as above, used for an optimization
+ 
+-  static const float THRESHOLD = 1e-4;           // used to terminate training
++  static const float THRESHOLD = 1e-2;           // used to terminate training
+   static const float RELENT_THRESHOLD = 0.00001; // used to decide upon perturbing parameters
+   static const int CHECK_ITERATION_THRESHOLD = 20;
+   static const int MAX_TRAINING_ITERATIONS = 100;
+diff -ruw stubb_2.1/parameters_h0.cpp stubb_for_REforge/parameters_h0.cpp
+--- stubb_2.1/parameters_h0.cpp	2003-11-18 17:18:51.000000000 +0100
++++ stubb_for_REforge/parameters_h0.cpp	2018-03-07 16:45:10.307222346 +0100
+@@ -27,6 +27,7 @@
+ #include <math.h>
+ #include <stdexcept>
+ #include "util.h"
++#include <iostream>
+ 
+ void Parameters_H0::Train(bool differential)
+ {
+@@ -74,6 +75,7 @@
+ #endif
+ 
+   _free_energy_perlength = _free_energy_differential / float(numTotal);
++  _free_energy_background = freeEnergyBackground;
+ 
+   _is_trained = true;
+ }
+@@ -112,6 +114,7 @@
+ #endif
+ 
+   _free_energy_perlength = _free_energy_differential / float(numTotal);
++  _free_energy_background = freeEnergyBackground;
+ 
+   _is_trained = true;
+ }
+@@ -607,19 +610,21 @@
+     char seqname[1024]; (*_windows)[0]->Seq()->Name(seqname);
+     fprintf(fp,"%.4f\t%.4f\t%d\t%d\t%s\n",_free_energy_differential,_free_energy_perlength,totalLen,_num_iterations,seqname);
+ #else
+-    fprintf(fp,"%.4f\t%.4f\t%d\t%d\n",_free_energy_differential,_free_energy_perlength,totalLen,_num_iterations);
++    // fprintf(fp,"%.4f\t%.4f\t%d\t%d\n",_free_energy_differential,_free_energy_perlength,totalLen,_num_iterations);
++    fprintf(fp,"%.4f\t%.4f\tBG:%.4f\tFG:%.4f\t%d\t%d\n",_free_energy_differential,_free_energy_perlength,_free_energy_background,_free_energy,totalLen,_num_iterations);
+ #endif
+ 
+     return;
+   }
+   else {
+-    for (int wi=0; wi<_windows->size(); wi++)
+-      (*_windows)[wi]->Print(verbose);
+-    fprintf(fp,"Score = %.4f\tTotalLen = %d\tIterations = %d\n",_free_energy_differential,totalLen,_num_iterations);
++    // for (int wi=0; wi<_windows->size(); wi++)
++    //   (*_windows)[wi]->Print(verbose);
++    // fprintf(fp,"Score = %.4f\tTotalLen = %d\tIterations = %d\n",_free_energy_differential,totalLen,_num_iterations);
++    fprintf(fp,"Score = %.4f\tTotalLen = %d\tIterations = %d\tBG:%.4f\tFG:%.4f\n",_free_energy_differential,totalLen,_num_iterations, _free_energy_background, _free_energy);
+   
+     int i;
+     
+-    _bkgwm->Print();
++    // _bkgwm->Print();
+     fprintf(fp,"Transition probabilities (p_i):\n");   // print the _pi values
+     for (i=0; i<_numWM; i++) {                    
+       fprintf(fp,"%g ",_pi[i]);
+diff -ruw stubb_2.1/stubb.cpp stubb_for_REforge/stubb.cpp
+--- stubb_2.1/stubb.cpp	2003-11-18 17:18:51.000000000 +0100
++++ stubb_for_REforge/stubb.cpp	2018-03-07 16:45:10.902209697 +0100
+@@ -26,6 +26,7 @@
+ #include <stdio.h>
+ #include <assert.h>
+ #include <math.h>
++#include <iostream>
+ 
+ #include "util.h"
+ #include "sequence.h"
+@@ -40,16 +41,31 @@
+ main(int argc, char **argv)
+ {
+   if (argc < 5) {
+-    printf("usage: %s <sequencefile> <wtmxfile> <windowsize> <shiftsize> [-od <output_dir>] [-b <background file>] [-ft <energy thresold for printing>] [-ot <motif occurrence threshold for printing]\n",argv[0]);
++    printf("usage: %s <sequencefile> <wtmxfile> <windowsize> <shiftsize> [-od <output_dir>] [-b <background file>] [-ft <energy thresold for printing>] [-ot <motif occurrence threshold for printing] [-brief] [-seq]\n",argv[0]);
+     exit(1);
+   }
+   globalid = 0;
+   global_background = NULL;
+ 
++  // Read in the optional arguments
++  int argbase = 5;
++  struct Options *opt = ReadOptionalArguments(argbase, argc, argv);
++
+   // Read in the sequence(s)
+-  char *fastafile = argv[1];
++  int numSeqs;
+   FastaFile sequences;
++  Sequence **seqs;
++  Sequence *_sequences[1];
++  char *fastafile = argv[1];
++  if (opt->seq) {
++    _sequences[0] = new Sequence(argv[1],strlen(argv[1]), "Sequence");
++    seqs = _sequences;
++    numSeqs = 1;
++  } else {
++    char *fastafile = argv[1];
+   sequences.ReadFasta(fastafile);
++    numSeqs = sequences.Size();
++  }
+ 
+   // Read in the weight matrices
+   char *wmcfile = argv[2];
+@@ -60,10 +76,6 @@
+   int windowsize = atoi(argv[3]);
+   int shiftsize = atoi(argv[4]);
+ 
+-  // Read in the optional arguments
+-  int argbase = 5;
+-  struct Options *opt = ReadOptionalArguments(argbase, argc, argv);
+-
+   if (opt->bkg_file != NULL) {
+     Sequence *bkg_seq = new Sequence(opt->bkg_file);
+     Window *bkg_window = new Window(bkg_seq,0,bkg_seq->Length()-1);
+@@ -73,15 +85,31 @@
+   }
+ 
+   // Prepare for various printing
+-  FILE *prof = OpenProfile(fastafile, opt->output_dir);
+-  FILE *dict = OpenDictionary(fastafile, opt->output_dir);
+-  FILE *ener = OpenOutput (fastafile, opt->output_dir);
++  FILE *prof;
++  FILE *dict;
++  FILE *ener;
++  FILE *prob;
++  if (!opt->brief) {
++    prof = OpenProfile(fastafile, opt->output_dir);
++    dict = OpenDictionary(fastafile, opt->output_dir);
++    ener = OpenOutput (fastafile, opt->output_dir);
++    prob = OpenProbabilities (fastafile, opt->output_dir);
+   PrintParameters(fastafile,wmcfile,windowsize, shiftsize, opt);
++  }
++
++  for (int seqnum=0; seqnum < numSeqs; seqnum++) {
++    Sequence *seq;
++    if (opt->seq) {
++      seq = seqs[seqnum];
++    } else {
++      seq = sequences[seqnum];
++    }
+   
+-  for (int seqnum=0; seqnum < sequences.Size(); seqnum++) {
+-    Sequence *seq = sequences[seqnum];
+     int seq_len = seq->Length();
+-    if (seq_len < 200) continue;
++    if (seq_len < 30) {
++      if (opt->brief) fprintf(stdout,"%d\t0\n",seqnum);
++      continue;
++    }
+ 
+     // Declare that the matrices in wmc are not going to be modified, and cache the probabilities
+ #ifdef _OPTIMIZE_CACHESEQUENCEPROBABILITIES
+@@ -89,6 +117,9 @@
+ #endif
+ 
+     // now start iterating through the windows
++    float maxllr = -1;
++    DTYPE *max_pi = new DTYPE[numWM+1];
++    
+     WindowIterator wi(seq);
+     bool did_begin = false;
+ #ifdef _EXIST_SMALL_SEQUENCES
+@@ -148,18 +179,36 @@
+       PruneMotifsAndTrain(totalLen,windowsize,wl,&wmc,param0,&wmc_prune,param0_prune);
+       // either param0_prune returns null, or param0 is deleted
+       if (param0_prune) {	
++        if (!opt->brief) {
+ 	param0_prune->Print(ener);
+ 	if (param0_prune->Free_Energy_Differential() > opt->fen_threshold)
+ 	  param0_prune->PrintProfile(prof,dict,opt->motif_occurrence_threshold);
++        } else {
++          if (param0_prune->Free_Energy_Differential() > maxllr) {
++            maxllr = param0_prune->Free_Energy_Differential();
++            for (int wmindex = 0; wmindex < numWM+1; wmindex++) {
++              max_pi[wmindex] = param0->GetParameter(wmindex);
++            }
++          }
++        }
+ 	delete param0_prune;
+       }
+       else {
++        if (!opt->brief) {
+ 	param0->Print(ener);
++          param0->PrintProbabilities(prob);
+ 	if (param0->Free_Energy_Differential() > opt->fen_threshold)
+ 	  param0->PrintProfile(prof,dict,opt->motif_occurrence_threshold);    
++        } else {
++          if (param0->Free_Energy_Differential() > maxllr) {
++            maxllr = param0->Free_Energy_Differential();
++            for (int wmindex = 0; wmindex < numWM+1; wmindex++) {
++              max_pi[wmindex] = param0->GetParameter(wmindex);
++            }
++          }
++        }
+ 	delete param0;
+       }      
+-      
+       // clean up
+       for (int windex=0; windex<wl->size(); windex++) {
+ 	Window *win =  (*wl)[windex];
+@@ -168,14 +217,26 @@
+       delete wl; 	
+     }
+     
++    if (opt->brief) {
++      fprintf(stdout,"%d\t%.5f",seqnum,maxllr);
++      for (int wmindex = 0; wmindex < numWM+1; wmindex++) {
++        fprintf(stdout, "\t%f", max_pi[wmindex]); 
++      }
++      fprintf(stdout, "\n");
++
++    }
++    
+ #ifdef _OPTIMIZE_CACHESEQUENCEPROBABILITIES
+     Parameters::DeleteCacheSubsequenceProbabilities(seq);
+ #endif
+   }
+ 
++  if (!opt->brief) {
+   fclose(ener);
+   fclose(dict);
+   fclose(prof);
++    fclose(prob);
++  }
+   delete opt;
+ }
+ 
+diff -ruw stubb_2.1/stubb_fixedprobs.cpp stubb_for_REforge/stubb_fixedprobs.cpp
+--- stubb_2.1/stubb_fixedprobs.cpp	2003-11-18 17:18:51.000000000 +0100
++++ stubb_for_REforge/stubb_fixedprobs.cpp	2018-03-07 16:45:10.301222474 +0100
+@@ -27,6 +27,7 @@
+ #include <assert.h>
+ #include <math.h>
+ 
++
+ #include "util.h"
+ #include "sequence.h"
+ #include "parameters.h"
+@@ -40,16 +41,31 @@
+ main(int argc, char **argv)
+ {
+   if (argc < 6) {
+-    printf("usage: %s <sequencefile> <wtmxfile> <windowsize> <shiftsize> <fitprobs_file> [-od <output_dir>] [-b <background file>] [-ft <energy thresold for printing>] [-ot <motif occurrence threshold for printing]\n",argv[0]);
++    printf("usage: %s <sequencefile> <wtmxfile> <windowsize> <shiftsize> <fitprobs_file> [-od <output_dir>] [-b <background file>] [-ft <energy thresold for printing>] [-ot <motif occurrence threshold for printing] [-brief] [-seq]\n",argv[0]);
+     exit(1);
+   }
+   globalid = 0;
+   global_background = NULL;
+ 
++  // Read in the optional arguments
++  int argbase = 6;
++  struct Options *opt = ReadOptionalArguments(argbase, argc, argv);
++
+   // Read in the sequence(s)
+-  char *fastafile = argv[1];
++  int numSeqs;
+   FastaFile sequences;
++  Sequence **seqs;
++  Sequence *_sequences[1];
++  char *fastafile = argv[1];
++  if (opt->seq) {
++    _sequences[0] = new Sequence(argv[1],strlen(argv[1]), "Sequence");
++    seqs = _sequences;
++    numSeqs = 1;
++  } else {
++    char *fastafile = argv[1];
+   sequences.ReadFasta(fastafile);
++    numSeqs = sequences.Size();
++  }
+ 
+   // Read in the weight matrices
+   char *wmcfile = argv[2];
+@@ -68,9 +84,6 @@
+       exit(1);
+     }
+   }
+-  // Read in the optional arguments
+-  int argbase = 6;
+-  struct Options *opt = ReadOptionalArguments(argbase, argc, argv);
+   
+   if (opt->bkg_file != NULL) {
+     Sequence *bkg_seq = new Sequence(opt->bkg_file);
+@@ -81,15 +94,29 @@
+   }
+   
+   // Prepare for various printing
+-  FILE *prof = OpenProfile(fastafile, opt->output_dir);
+-  FILE *dict = OpenDictionary(fastafile, opt->output_dir);
+-  FILE *ener = OpenOutput (fastafile, opt->output_dir);
++  FILE *prof;
++  FILE *dict;
++  FILE *ener;
++  if (!opt->brief) {
++    prof = OpenProfile(fastafile, opt->output_dir);
++    dict = OpenDictionary(fastafile, opt->output_dir);
++    ener = OpenOutput (fastafile, opt->output_dir);
+   PrintParameters(fastafile,wmcfile,windowsize, shiftsize, opt);
++  }
++  
++  for (int seqnum=0; seqnum < numSeqs; seqnum++) {
++    Sequence *seq;
++    if (opt->seq) {
++      seq = seqs[seqnum];
++    } else {
++      seq = sequences[seqnum];
++    }
+   
+-  for (int seqnum=0; seqnum < sequences.Size(); seqnum++) {
+-    Sequence *seq = sequences[seqnum];
+     int seq_len = seq->Length();
+-    if (seq_len < 200) continue;
++    if (seq_len < 30) {
++      if (opt->brief) fprintf(stdout,"%d\t0\n",seqnum);
++      continue;
++    }
+     
+     // Declare that the matrices in wmc are not going to be modified, and cache the probabilities
+ #ifdef _OPTIMIZE_CACHESEQUENCEPROBABILITIES
+@@ -97,6 +124,7 @@
+ #endif
+     
+     // now start iterating through the windows
++    float maxllr = -1;
+     WindowIterator wi(seq);
+     bool did_begin = false;
+ #ifdef _EXIST_SMALL_SEQUENCES
+@@ -149,10 +177,15 @@
+       param0->Initialize(wl,&wmc,bkgIndex);
+       param0->SetParameters(fitprobs);
+       param0->TrainWithFixedParameters();
+-      
+-      param0->Print(ener);
++      if (!opt->brief) {
++        param0->Print(ener, false);
+       if (param0->Free_Energy_Differential() > opt->fen_threshold)
+ 	param0->PrintProfile(prof,dict,opt->motif_occurrence_threshold);    
++      } else {
++        if (param0->Free_Energy_Differential() > maxllr) {
++          maxllr = param0->Free_Energy_Differential(); 
++        }
++      }
+       delete param0;
+       
+       // clean up
+@@ -163,14 +196,20 @@
+       delete wl; 	
+     }
+     
++    if (opt->brief) {
++      fprintf(stdout,"%d\t%.5f\n",seqnum,maxllr);
++    }
++    
+ #ifdef _OPTIMIZE_CACHESEQUENCEPROBABILITIES
+     Parameters::DeleteCacheSubsequenceProbabilities(seq);
+ #endif
+   }
+     
++  if (!opt->brief) { 
+   fclose(ener);
+   fclose(dict);
+   fclose(prof);
++  }
+   delete opt;
+ }
+ 
+diff -ruw stubb_2.1/util.cpp stubb_for_REforge/util.cpp
+--- stubb_2.1/util.cpp	2003-11-18 17:18:51.000000000 +0100
++++ stubb_for_REforge/util.cpp	2018-03-07 16:45:10.316222155 +0100
+@@ -282,6 +282,17 @@
+       argbase++;
+       continue;
+     }    
++    if (!strcmp(argv[argbase],"-brief")) {
++      opt->brief = true;
++      argbase++;
++      continue;
++    }
++    if (!strcmp(argv[argbase],"-seq")) {
++      opt->seq = true;
++      opt->brief = true;
++      argbase++;
++      continue;
++    }
+     if (strstr(argv[argbase],"-b")) {
+       argbase++;
+       if (argbase >= argc) {
+diff -ruw stubb_2.1/util.h stubb_for_REforge/util.h
+--- stubb_2.1/util.h	2003-11-18 17:18:51.000000000 +0100
++++ stubb_for_REforge/util.h	2018-03-07 16:45:10.898209782 +0100
+@@ -40,6 +40,8 @@
+   int  *corr_list; int corr_list_size;
+   float fen_threshold;
+   float motif_occurrence_threshold;
++  bool  brief;
++  bool  seq;
+ 
+   Options() { output_dir = NULL; bkg_file = NULL; phylogeny_file = NULL; anchors_file = NULL; corr_file = NULL; fen_threshold = DEFAULT_FEN_THRESHOLD; motif_occurrence_threshold = DEFAULT_MOTIF_OCCURRENCE_THRESHOLD; corr_list = NULL; corr_list_size = 0; }
+   ~Options() { if (corr_list != NULL) delete [] corr_list; }
+diff -ruw stubb_2.1/wtmx.h stubb_for_REforge/wtmx.h
+--- stubb_2.1/wtmx.h	2003-11-18 17:18:51.000000000 +0100
++++ stubb_for_REforge/wtmx.h	2018-03-07 16:45:10.904209654 +0100
+@@ -31,7 +31,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#define PSEUDO_COUNT 0.5
++#define PSEUDO_COUNT 0.0
+ extern int globalid;
+ 
+ // The Weight matrix class
