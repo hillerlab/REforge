@@ -3,9 +3,9 @@
 REforge (Regulatory Element forward genomics) is a method to associate transciption factor binding site divergence in regulatory elements with phenotypic differences between species [1].
 
 # Requirements:
-Python3 with Bio and rpy2 (requires R)
-Stubb_2.1 [2]
-tree_doctor [3]. A linux 64 bit binary is included. The source code is available at https://github.com/CshlSiepelLab/phast/ in src/util/)
+* Python3 with Bio and rpy2 (requires R)
+* Stubb_2.1 [2]
+* tree_doctor [3]. A linux 64 bit binary is included. The source code is available at https://github.com/CshlSiepelLab/phast/ in src/util/
 
 # Installation:
 
@@ -74,7 +74,8 @@ REforge_statistics.py <tree> <motiffile> <lost_species_list> <element_list>
 REforge_statistics.py classifies branches into trait-loss and trait-preserving and assesses the significance the association of this classification with the branch scores. 
 
 ## Common Parameters
-### REforge.py
+#### REforge.py
+```
 --add_suffix <suffix>
 Appends suffix to every generated file
 --windowsize/-w <n>
@@ -83,21 +84,25 @@ Scoring window used in sequence scoring
 Background used for sequence scoring. Either a file or a folder structure with backgrounds for different GC contents
 --scrCrrIter <n>
 Number score correction iterations. 0 turns the score correction off
-
-### REforge_statistics.py
+```
+#### REforge_statistics.py
+```
 --add_suffix <suffix>
 Appends suffix to every generated file
 --filterspecies <comma separated list>
 Exclude species from analyses
 --elements <file>
 Analyse only the elements specified <file>
+```
 
-
-### Special parameters
+## Special parameters
+```
 --verbose/-v
 --debug/-d
+```
 
-REforge.py
+#### REforge.py
+```
 --no_ancestral_filter
 Turn of ancestral score filtering
 --no_fixed_TP
@@ -110,3 +115,11 @@ Like --filter_branch_threshold but with motif specific branch thresholds from <f
 Filter branches with a GC content change above <x>
 --filter_length_change <x>
 Filter branches with a relative length change above <x>
+```
+ 
+# References
+[1] Langer BE, Roscito JG, Hiller M. REforge associates transcription factor binding site divergence in regulatory elements with phenotypic differences between species. submitted
+
+[2] Sinha S, van Nimwegen E, Siggia ED. A Probabilistic Method to Detect Regulatory Modules. Bioinformatics, 19(S1), 2003
+
+[3] Hubisz MJ, Pollard KS, Siepel A. PHAST and RPHAST: Phylogenetic Analysis with Space/Time Models. Briefings in Bioinfomatics 12(1):41-51, 2011.
