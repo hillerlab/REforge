@@ -94,6 +94,8 @@ def __analyse_sequences():
 	subprocess.check_call("> alljobs%s"%suffix, shell=True)													# (re-)create a new joblist file
 	subprocess.check_call(["chmod", "+x", "alljobs%s"%suffix])
 	allJobsFile = "alljobs%s"%suffix
+	if not args.no_fixed_TP:
+		subprocess.check_call(["mkdir", "-p", "tempDir"])
 
 	if not os.path.exists("scores%s"%suffix):	subprocess.check_call(["touch", "scores%s"%suffix])
 	create_branch_scoring_job_list(elements, args.motiffile, windowsize, args, 
