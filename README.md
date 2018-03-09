@@ -37,13 +37,14 @@ cd example
 # Create a joblist file 'alljobs_simulation' containing the branch_scoring jobs
 REforge.py data/tree_simulation.nwk data/motifs.wtmx data/species_lost_simulation.txt elements_simul.ls \
   --windowsize 200 --add_suffix _simulation -bg=background/
+
 # Run job list as batch or in parallel 
 bash alljobs_simulation > scores_simulation
+
 # Run the association test
 REforge_statistics.py data/tree_simulation.nwk data/motifs.wtmx data/species_lost_simulation.txt \
    elements_simul.ls --add_suffix _simulation
-# This generates a file 'significant_elements_simulation' that alphabetically lists the elements, 
-# their P-value and the number of branches
+# This generates a file 'significant_elements_simulation' that alphabetically lists the elements, their P-value and the number of branches
 ```
 
 # General workflow
