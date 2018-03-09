@@ -35,11 +35,15 @@ export PATH=$PATH:`pwd`
 cd example
 
 # Create a joblist file 'alljobs_simulation' containing the branch_scoring jobs
-REforge.py data/tree_simulation.nwk data/motifs.wtmx data/species_lost_simulation.txt elements_simul.ls --windowsize 200 --add_suffix _simulation -bg=background/
+REforge.py data/tree_simulation.nwk data/motifs.wtmx data/species_lost_simulation.txt elements_simul.ls \
+  --windowsize 200 --add_suffix _simulation -bg=background/
 # Run job list as batch or in parallel 
 bash alljobs_simulation > scores_simulation
 # Run the association test
-REforge_statistics.py data/tree_simulation.nwk data/motifs.wtmx data/species_lost_simulation.txt elements_simul.ls --add_suffix _simulation
+REforge_statistics.py data/tree_simulation.nwk data/motifs.wtmx data/species_lost_simulation.txt \
+   elements_simul.ls --add_suffix _simulation
+# This generates a file 'significant_elements_simulation' that alphabetically lists the elements, 
+# their P-value and the number of branches
 ```
 
 # General workflow
@@ -81,7 +85,7 @@ Appends suffix to every generated file
 --windowsize/-w <n>
 Scoring window used in sequence scoring
 --background/-bg <folder>
-Background used for sequence scoring. Either a file or a folder structure with backgrounds for different GC contents
+Background used for sequence scoring. Either a file or a folder with backgrounds for different GC contents
 --scrCrrIter <n>
 Number score correction iterations. 0 turns the score correction off
 ```
