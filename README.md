@@ -123,7 +123,7 @@ Filter branches with a relative length change above <x>
 ```
  
 # References
-[1] Langer BE, Roscito JG, Hiller M. REforge associates transcription factor binding site divergence in regulatory elements with phenotypic differences between species. submitted
+[1] Langer BE, Roscito JG, Hiller M. REforge associates transcription factor binding site divergence in regulatory elements with phenotypic differences between species. 
 
 [2] Sinha S, van Nimwegen E, Siggia ED. A Probabilistic Method to Detect Regulatory Modules. Bioinformatics, 19(S1), 2003
 
