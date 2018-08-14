@@ -37,15 +37,14 @@ def read_sequences_and_prune_tree(fastafile, treefile, dismiss_species=[]):
 		if fastafile.endswith('.fa'):
 			sequences = SeqIO.to_dict(SeqIO.parse(fastafile, "fasta"))
 		else:
-			sequencedata = subprocess.check_output("ReadBDB.perl ALI '%s' -brief"%(cre), shell=True)
+			sequencedata = subprocess.check_output("ReadBDB.perl ALI '%s' -brief"%(fastafile), shell=True)
 			sequences = SeqIO.to_dict(SeqIO.parse(io.StringIO(sequencedata.decode("utf-8")), "fasta"))
 	except Exception as err:
 		logging.fatal(err)
-		return 1
-
+		
 	# prune and read tree
 	if sequences == {}:
-		logging.fatal("no sequences given for tree pruning - empty tree")
+		logging.fatal("no sequences given in %s for tree pruning - empty tree"%fastafile)
 		phylo_tree = Phylo.read(io.StringIO("()"), "newick")
 	else:
 		logging.debug("tree_doctor %s -antN -P %s"%(treefile, ",".join(sequences.keys())))
@@ -100,7 +99,7 @@ def find_best_background(folder, gc_content=None, seq_file=None, sequence=None):
 	else:					gc = gc_content
 	if not os.path.isabs(folder):	folder = os.getcwd() + '/' + folder
 	if not os.path.exists(folder):
-		logging.fatal("background %s not found"%background)
+		logging.fatal("background %s not found"%folder)
 	backgrounds = sorted( next( os.walk(folder) )[1] )
 	bkgd_gcs = [re.search(pattern, subfolder) for subfolder in backgrounds]
 	if bkgd_gcs == [None] * len(bkgd_gcs):
@@ -117,7 +116,7 @@ def score_sequence_with_stubb(wtmxFile, window, seq_file=None, sequence=None, ba
 	if glob.glob(wtmxFile) == []:						raise Exception("Error in score_sequence_with_stubb: wtmx file %s not found"%wtmxFile)
 	if keepFiles and not seq_file:						raise Exception("Error in score_sequence_with_stubb: Files can only be kept with sequence given as file")
 	assert scrCrrMthd in [None, 'stubb']
-
+	
 	# get background file
 	if background is not None:
 		if background.endswith(".fa"):	bkgd_file = background
@@ -125,8 +124,8 @@ def score_sequence_with_stubb(wtmxFile, window, seq_file=None, sequence=None, ba
 		arguments += ' -b ' + bkgd_file
 	else:
 		bkgd_file = None
-
-
+		
+		
 	if scrCrrMthd is not None:
 		# compute score correction value via application of Stubb on shuffled sequences
 		logging.debug("Iterative score correction")
@@ -138,7 +137,7 @@ def score_sequence_with_stubb(wtmxFile, window, seq_file=None, sequence=None, ba
 		random.seed(sequence_template)
 		sequence_template = sequence_template.replace('N','')
 		gc = computeGCContent(seq_file=seq_file, sequence=sequence) / 100 if gc_content is None else gc_content
-
+		
 		r_scores = []
 		for x in range(scrCrrIter):
 			r_seq	= shuffle_sequence(sequence_template)
@@ -146,7 +145,7 @@ def score_sequence_with_stubb(wtmxFile, window, seq_file=None, sequence=None, ba
 			assert len(r_score) == 1 																# number of scores correspond to number of sequences
 			r_scores.append( r_score[0] )
 		r_score = sum(r_scores)/len(r_scores)
-
+		
 	# compute Stubb score
 	if sequence is not None:
 		if fitprobs_file:	call = "stubb_fixedprobs_noPseudoCount %s %s %s 1 %s %s -brief -seq"%(sequence, wtmxFile, window, fitprobs_file, arguments)
@@ -165,7 +164,11 @@ def score_sequence_with_stubb(wtmxFile, window, seq_file=None, sequence=None, ba
 		else:				call = "stubb_noPseudoCount %s %s %s 1 %s"%(seq_file, wtmxFile, window, arguments)
 		if keepFiles:
 			logging.debug(call)
-			subprocess.check_call(call, shell=True, executable='/bin/bash')
+			try:
+				subprocess.check_call(call, shell=True, executable='/bin/bash')
+			except subprocess.CalledProcessError as err:
+				logging.warning("Error occured while scoring sequence %s :\n %s"%(sequence, err))
+				return [float('nan')]
 			try:
 				with open(seq_file + ".fen") as f:
 					scores = []
@@ -183,6 +186,6 @@ def score_sequence_with_stubb(wtmxFile, window, seq_file=None, sequence=None, ba
 			logging.debug(call)
 			output = subprocess.check_output(call, shell=True, executable='/bin/bash')
 			scores = [list(map(float, output.strip().split()))[1]]
-
+			
 	if scrCrrMthd is not None:	return [s - r_score for s in scores]
 	else:						return scores

@@ -28,7 +28,7 @@ def __get_arguments():
 
 	app.add_argument("--add_suffix", 	type=str, help="add this suffix to files")
 	app.add_argument("--filterspecies", type=str, help="skip species")
-	app.add_argument("--elements",		type=str, help="analyze only the elements specified in this file")
+	app.add_argument("--elements",		type=str, help="restrict score file to the elements specified in this file")
 
 	app.add_argument("--verbose", "-v", action="store_true")
 	app.add_argument("--debug", "-d", action="store_true")
@@ -76,13 +76,13 @@ def test_significance(s, p):
 	# ret_val = "\t".join(texts)
 	return ret_val
 	
-def compute_and_output_significance(args, scoreData, elements, more_data=None):
+def compute_and_output_significance(args, scoreData, elements):
 	""" creates computes significance for every element and creates summarizing file """
 	full_suffix = suffix
 	if args.elements: full_suffix += '_' + os.path.basename(args.elements)
 
 	with open("significant_elements%s"%full_suffix, "w") as summary:
-		summary.write("element\tPearson\t#pos\t#neg\n")
+		summary.write("element\tPearson\tNoPos\tNoNeg\n")
 		for cne in elements:
 			if cne+"+" in scoreData and cne+"-" in scoreData:
 				phenotypes = [1]*len(scoreData[cne+"+"]) + [0]*len(scoreData[cne+"-"])
@@ -97,9 +97,9 @@ def compute_and_output_significance(args, scoreData, elements, more_data=None):
 						raise err
 					summary.write("{0:15}\t{1}\t{2}\t{3}\n".format(cne, pvalue, phenotypes.count(0), phenotypes.count(1)))
 				else:
-					summary.write("{0:15}\tNA\t{2}\t{3}\n".format(cne, phenotypes.count(0), phenotypes.count(1)) )
+					summary.write("{0:15}\tNA\t{1}\t{2}\n".format(cne, phenotypes.count(0), phenotypes.count(1)) )
 			else:
-				logging.info("scoreData for transcription factor %s is missing"%cne)
+				logging.info("scoreData for CRE %s is missing"%cne)
 
 
 def __analyse_sequences():
@@ -155,12 +155,14 @@ def __analyse_sequences():
 	if c_nan > 0:	logging.warning("%d NaN or Inf values have been skipped"%c_nan)
 	logging.info("%d lines read"%counter)
 
+
 	#########################
 	# retrieve trait loss branches
 	with open(args.lossfile) as lf:
 		losses = [line.strip() for line in lf]
 	dismiss_species = args.filterspecies.split(",") if args.filterspecies else []
 	sub_phylos = {}
+
 	for cne in elements:
 		pruned_tree, _ = read_sequences_and_prune_tree(cne, args.treefile, dismiss_species)
 		sub_phylos[cne] = dollo_parsimony(pruned_tree, losses)			# annotate with trait
