@@ -11,7 +11,7 @@ from functools import lru_cache
 from os import path
 from Bio import Phylo, SeqIO, SeqUtils
 
-__description__ = "helper for the regulatory element pipeline to score elements"
+__description__ = "helper for the REforge and TFforge pipeline to score elements"
 
 def dollo_parsimony(phylo_tree, traitLossSpecies):
 	""" simple dollo parsimony implementation
@@ -34,7 +34,7 @@ def read_sequences_and_prune_tree(fastafile, treefile, dismiss_species=[]):
 	import io
 	sequences = {}
 	try:
-		if fastafile.endswith('.fa'):
+		if fastafile.endswith('.fa') or fastafile.endswith('.fasta'):
 			sequences = SeqIO.to_dict(SeqIO.parse(fastafile, "fasta"))
 		else:
 			sequencedata = subprocess.check_output("ReadBDB.perl ALI '%s' -brief"%(fastafile), shell=True)
@@ -44,7 +44,7 @@ def read_sequences_and_prune_tree(fastafile, treefile, dismiss_species=[]):
 		
 	# prune and read tree
 	if sequences == {}:
-		logging.fatal("no sequences given in %s for tree pruning - empty tree"%fastafile)
+		logging.fatal("no sequences given for tree pruning - empty tree")
 		phylo_tree = Phylo.read(io.StringIO("()"), "newick")
 	else:
 		logging.debug("tree_doctor %s -antN -P %s"%(treefile, ",".join(sequences.keys())))

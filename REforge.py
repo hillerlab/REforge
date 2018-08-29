@@ -13,7 +13,7 @@ import rpy2
 import rpy2.robjects as robjects
 import rpy2.robjects.packages as rpackages
 from Bio import Phylo, SeqIO
-from REforge_util import dollo_parsimony
+from Scoring_utilities import dollo_parsimony
 
 __description__ = "Analyses transcription factor motifs with respect to their differences in binding within a phylogeny of CRM sequences and the associated phenotype"
 __default_windowsize__ = 500
@@ -32,8 +32,8 @@ def __get_arguments():
 
 	app.add_argument("treefile", 		type=str, help="phylogenetic tree given in newick format")
 	app.add_argument("motiffile",		type=str, help="wtmx file containing all transcription factor motifs")
-	app.add_argument("lossfile", 		type=str, help="file either in special loss format (.ls) or simple list")
-	app.add_argument("elementfile", 	type=str, help="file with names of putative elements; one line per element")
+	app.add_argument("lossfile", 		type=str, help="file listing trait loss species; one line per species")
+	app.add_argument("elementfile", 	type=str, help="file listing putative elements; one line per fasta file (.fa or .fasta)")
 
 	app.add_argument("--add_suffix", 	type=str, help="add this suffix to files")
 	app.add_argument("--windowsize", "-w",	type=str, help="windowsize to be used for element scoring")

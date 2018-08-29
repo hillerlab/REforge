@@ -8,7 +8,7 @@ import logging
 import subprocess
 from tempfile import mkstemp
 from Bio import Phylo, SeqIO
-from REforge_util import score_sequence_with_stubb, computeGCContent, roundToList, read_sequences_and_prune_tree
+from Scoring_utilities import score_sequence_with_stubb, computeGCContent, roundToList, read_sequences_and_prune_tree
 
 
 
@@ -22,7 +22,7 @@ def __get_arguments():
 	app = argparse.ArgumentParser(description=__description__)
 	app.add_argument("motiffile",			type=str, help="motif as position frequency matrix")
 	app.add_argument("treefile", 			type=str, help="phylogenetic tree. If elements might use a subtree ancestral nodes must be unnamed")
-	app.add_argument("element", 			type=str, help="path to fasta file containing element's sequence aligniment")							
+	app.add_argument("element", 			type=str, help="path to fasta file containing element's sequence alignment")							
 	# species sequence data can be given in a BerkeleyDB file 'ALI'. In this case the parameter specifies the element name
 	app.add_argument("scoring_window_length", 	type=str, help="scoring window length")
 	app.add_argument("--background", "-bg",	type=str, help="background file - passed into the score function")
