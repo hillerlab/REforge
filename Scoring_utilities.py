@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import glob
 import logging
 import numpy as np
@@ -29,15 +32,16 @@ def dollo_parsimony(phylo_tree, traitLossSpecies):
 	return phylo_tree
 
 
-def read_sequences_and_prune_tree(fastafile, treefile, dismiss_species=[]):
+def read_sequences_and_prune_tree(fastafile, treefile, dismiss_species=[], alignment=None):
 	""" reads the fastafile and prunes the tree to all species that occur  """
 	import io
 	sequences = {}
 	try:
-		if fastafile.endswith('.fa') or fastafile.endswith('.fasta'):
+		if alignment is None:
+			if not (fastafile.endswith('.fa') or fastafile.endswith('.fasta')): logging.warning("%s specified as element seems to be not in fasta-format."%fastafile)
 			sequences = SeqIO.to_dict(SeqIO.parse(fastafile, "fasta"))
 		else:
-			sequencedata = subprocess.check_output("ReadBDB.perl ALI '%s' -brief"%(fastafile), shell=True)
+			sequencedata = subprocess.check_output("ReadBDB.perl %s '%s' -brief"%(alignment, fastafile), shell=True)
 			sequences = SeqIO.to_dict(SeqIO.parse(io.StringIO(sequencedata.decode("utf-8")), "fasta"))
 	except Exception as err:
 		logging.fatal(err)

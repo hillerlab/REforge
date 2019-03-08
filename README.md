@@ -36,14 +36,14 @@ cd example
 
 # Create a joblist file 'alljobs_simulation' containing the branch_scoring jobs
 REforge.py data/tree_simulation.nwk data/motifs.wtmx data/species_lost_simulation.txt elements_simul.ls \
-  --windowsize 200 --add_suffix _simulation -bg=background/
+  --windowsize 200 --scorefile scores_simulation -bg=background/
 
 # Run job list as batch or in parallel 
 bash alljobs_simulation > scores_simulation
 
 # Run the association test
 REforge_statistics.py data/tree_simulation.nwk data/motifs.wtmx data/species_lost_simulation.txt \
-   elements_simul.ls --add_suffix _simulation
+   elements_simul.ls --scorefile scores_simulation
 # This generates a file 'significant_elements_simulation' that alphabetically lists the elements, their P-value and the number of branches
 ```
 
@@ -60,17 +60,16 @@ Generate the REforge branch_scoring commands for all CREs.
 ```
 REforge.py <tree> <motiffile> <lost_species_list> <element_list>
 ```
-This creates for every CRE a REforge_branch_scoring.py job. Each line in alljobs<suffix> consists a single job. Each job is completely independent of any other job, thus each job can be run in parallel to others.
+This creates for every CRE a REforge_branch_scoring.py job. Each line in alljobs_<scorefile> consists a single job. Each job is completely independent of any other job, thus each job can be run in parallel to others.
 
-Execute that alljobs file. Either sequentially by doing
+Execute that alljobs file. Either sequentially via
 ```
-chmod +x alljobs_simulation
-./alljobs_simulation > scores_simulation
+bash alljobs_simulation > scores_simulation
 ```
 or run it in parallel by using a compute cluster.
 Every job returns a line in the following format:
 motif_file	CRE_file	(branch_start>branch_end:branch_score	)*	<
-which should be concatenated into a file called "scores<suffix>".
+which should be concatenated into a file called "<scorefile>".
 
 ## Step 2: Association test
 ```
@@ -81,19 +80,19 @@ REforge_statistics.py classifies branches into trait-loss and trait-preserving a
 ## Common Parameters
 #### REforge.py
 ```
---add_suffix <suffix>
-Appends suffix to every generated file
+--scorefile <name>
+Name file <name> instead of "scores"
 --windowsize/-w <n>
 Scoring window used in sequence scoring
 --background/-bg <folder>
-Background used for sequence scoring. Either a file or a folder with backgrounds for different GC contents
+Background used for sequence scoring. Either a file or a folder structure with backgrounds for different GC contents
 --scrCrrIter <n>
-Number score correction iterations. 0 turns the score correction off
+Stubb score is corrected with the average score of <number> of shuffled sequences. Default is 10. 0 turns the score correction off
 ```
 #### REforge_statistics.py
 ```
---add_suffix <suffix>
-Appends suffix to every generated file
+--scorefile <name>
+Use <name> as scorefile instead of "scores"
 --filterspecies <comma separated list>
 Exclude species from analyses
 --elements <file>
@@ -110,12 +109,12 @@ Analyse only the elements specified <file>
 ```
 --no_ancestral_filter
 Turn of ancestral score filtering
+--no_branch_filter
+Turn of branch score filtering
 --no_fixed_TP
 Do not fix transition probabilites while computing branch scores
 --filter_branch_threshold <x>
-Filter branches if start and end node are below <x>
---filter_branches <file>
-Like --filter_branch_threshold but with motif specific branch thresholds from <file>
+Threshold for branch filter; By default branches are filtered if start and end node score are below 0
 --filter_GC_change <x>
 Filter branches with a GC content change above <x>
 --filter_length_change <x>
