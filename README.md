@@ -39,7 +39,7 @@ REforge.py data/tree_simulation.nwk data/motifs.wtmx data/species_lost_simulatio
   --windowsize 200 --scorefile scores_simulation -bg=background/
 
 # Run job list as batch or in parallel 
-bash alljobs_simulation > scores_simulation
+bash alljobs_scores_simulation > scores_simulation
 
 # Run the association test
 REforge_statistics.py data/tree_simulation.nwk data/motifs.wtmx data/species_lost_simulation.txt \
@@ -50,7 +50,13 @@ REforge_statistics.py data/tree_simulation.nwk data/motifs.wtmx data/species_los
 # General workflow
 ## Input data
 - species tree in newick format
-- motif file in wtmx format (see example/data/motifs.wtmx as example)
+- motif file in wtmx format (see example/data/motifs.wtmx as example) listing all motifs, each according to the following model: 
+> \>*motif_name*	*motif_length*	[optional fields]  
+> *pos1_freqA*	*pos1_freqC*	*pos1_freqG*	*pos1_freqT*  
+> *pos2_freqA*	*pos2_freqC*	*pos2_freqG*	*pos2_freqT*  
+> ..  
+> *posN_freqA*	*posN_freqC*	*posN_freqG*	*posN_freqT*  
+> \<  
 - Phenotype-loss species list: one species per line (see example/data/species_lost_simulation.txt)
 - CRE fastafiles: each file contains the sequence for every (ancestral or extant) species
 - CRE list: path of fastafile of one CRE per line
@@ -60,16 +66,17 @@ Generate the REforge branch_scoring commands for all CREs.
 ```
 REforge.py <tree> <motiffile> <lost_species_list> <element_list>
 ```
-This creates for every CRE a REforge_branch_scoring.py job. Each line in alljobs_<scorefile> consists a single job. Each job is completely independent of any other job, thus each job can be run in parallel to others.
+This creates for every CRE a REforge_branch_scoring.py job. Each line in alljobs_\<scorefile\> consists a single job. Each job is completely independent of any other job, thus each job can be run in parallel to others.
 
 Execute that alljobs file. Either sequentially via
 ```
 bash alljobs_simulation > scores_simulation
 ```
 or run it in parallel by using a compute cluster.
-Every job returns a line in the following format:
-motif_file	CRE_file	(branch_start>branch_end:branch_score	)*	<
-which should be concatenated into a file called "<scorefile>".
+Every job returns a line in the following format:  
+> *motif_file*	*CRE_file*	(*branch_start*>*branch_end*:*branch_score*	)*	<  
+
+which should be concatenated into a file called "\<scorefile\>".
 
 ## Step 2: Association test
 ```
