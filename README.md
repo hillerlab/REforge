@@ -25,7 +25,7 @@ gmake -f nm_gnu.mak
 cd ../../
 make
 export PATH=$PATH:`pwd`/bin
-cd ../REforge/
+cd /path/to/REforge/
 export PATH=$PATH:`pwd`
 ```
 
