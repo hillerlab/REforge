@@ -19,7 +19,7 @@ tar -xvf newmat11.tar.gz -C stubb_2.1/lib/newmat/
 
 # REforge uses a slightly modified version of Stubb
 cd stubb_2.1/
-patch -p1 < ../REforge/stubb.patch
+patch -p1 < /path/to/REforge/stubb.patch
 cd lib/newmat/
 gmake -f nm_gnu.mak
 cd ../../
