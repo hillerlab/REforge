@@ -19,13 +19,13 @@ tar -xvf newmat11.tar.gz -C stubb_2.1/lib/newmat/
 
 # REforge uses a slightly modified version of Stubb
 cd stubb_2.1/
-patch -p1 < ../REforge/stubb.patch
+patch -p1 < /path/to/REforge/stubb.patch
 cd lib/newmat/
 gmake -f nm_gnu.mak
 cd ../../
 make
 export PATH=$PATH:`pwd`/bin
-cd ../REforge/
+cd /path/to/REforge/
 export PATH=$PATH:`pwd`
 ```
 
