@@ -49,17 +49,17 @@ REforge_statistics.py data/tree_simulation.nwk data/motifs.wtmx data/species_los
 
 # General workflow
 ## Input data
-- species tree in newick format
-- motif file in wtmx format (see example/data/motifs.wtmx as example) listing all motifs, each according to the following model: 
+* species tree in newick format
+* motif file in wtmx format (see example/data/motifs.wtmx as example) listing all motifs, each according to the following model: 
 > \>*motif_name*	*motif_length*	[optional fields]  
 > *pos1_freqA*	*pos1_freqC*	*pos1_freqG*	*pos1_freqT*  
 > *pos2_freqA*	*pos2_freqC*	*pos2_freqG*	*pos2_freqT*  
 > ..  
 > *posN_freqA*	*posN_freqC*	*posN_freqG*	*posN_freqT*  
 > \<  
-- Phenotype-loss species list: one species per line (see example/data/species_lost_simulation.txt)
-- CRE fastafiles: each file contains the sequence for every (ancestral or extant) species
-- CRE list: path of fastafile of one CRE per line
+* Phenotype-loss species list: one species per line (see example/data/species_lost_simulation.txt)
+* CRE fastafiles: each file contains the sequence for every (ancestral or extant) species
+* CRE list: path of fastafile of one CRE per line
 
 ## Step 1: Branch score computation
 Generate the REforge branch_scoring commands for all CREs.
@@ -83,6 +83,12 @@ which should be concatenated into a file called "\<scorefile\>".
 REforge_statistics.py <tree> <motiffile> <lost_species_list> <element_list>
 ```
 REforge_statistics.py classifies branches into trait-loss and trait-preserving and assesses the significance the association of this classification with the branch scores. 
+
+## Output data
+The output file (significant_elements_\<score_file\>.tsv) has 4 columns:
+> element	Pearson	NoPos	NoNeg
+
+These list for every *element* the number of trait-loss branches (*NoPos*) and trait-preserving branches (*NoNeg*) and the significance of a positive Pearson correlation (Are trait-loss branches correlating with lower scores?), given by the p-value in the *Pearson* column. 
 
 ## Common Parameters
 #### REforge.py
