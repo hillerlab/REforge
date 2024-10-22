@@ -47,9 +47,13 @@ def test_significance(s, p):
 	data = robjects.DataFrame({"Val":r_s, "P":r_p})					# is ordered alphabetically, ie data[0] corresponds to P
 	data0 = robjects.r['subset'](data, data.rx('P').ro == 0)
 	data1 = robjects.r['subset'](data, data.rx('P').ro == 1)
+	### Compute t-test 
 	# t 	= robjects.r['t.test'](robjects.r('Val ~ P'), alternative="less", data=data )
+	### Compute Pearson correlation 
 	Pearson		= robjects.r['cor.test'](data.rx2('P'), data.rx2('Val'), method="pearson", exact=True, alternative="greater")
+	### Compute Spearman correlation 
 	# Spearman	= robjects.r['cor.test'](data.rx2('P'), data.rx2('Val'), method="spearman", exact=True, alternative="greater")
+	### Compute Wilcoxon rank-sum 
 	# try:
 	# 	w 	= robjects.r['wilcox.test'](robjects.r('Val ~ P'), data=data, alternative="less", **{'conf.int': True})
 	# except rpy2.rinterface.RRuntimeError as err:
@@ -81,7 +85,7 @@ def compute_and_output_significance(args, scoreData, elements):
 	full_suffix = scorefile
 	if args.elements: full_suffix += '_' + os.path.basename(args.elements)
 
-	with open("significant_elements%s"%full_suffix, "w") as summary:
+	with open("significant_elements_%s.tsv"%full_suffix, "w") as summary:
 		summary.write("element\tPearson\tNoPos\tNoNeg\n")
 		for cne in elements:
 			if cne+"+" in scoreData and cne+"-" in scoreData:
