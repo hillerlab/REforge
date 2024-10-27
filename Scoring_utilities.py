@@ -161,7 +161,7 @@ def score_sequence_with_stubb(wtmxFile, window, seq_file=None, sequence=None, ba
 			scores = [output[1]]
 		except Exception as err:
 			logging.warning("Error in score_sequence_with_stubb: %s"%err)
-			# Segmentation Fault occurs if number of N in window > length/2 wherase length is min(sequence length, window size)
+			# Segmentation Fault occurs if number of N in window > length/2 where length is min(sequence length, window size)
 			return [float('nan')]
 	else:
 		if fitprobs_file:	call = "stubb_fixedprobs_noPseudoCount %s %s %s 1 %s %s"%(seq_file, wtmxFile, window, fitprobs_file, arguments)
@@ -171,7 +171,7 @@ def score_sequence_with_stubb(wtmxFile, window, seq_file=None, sequence=None, ba
 			try:
 				subprocess.check_call(call, shell=True, executable='/bin/bash')
 			except subprocess.CalledProcessError as err:
-				logging.warning("Error occured while scoring sequence %s :\n %s"%(sequence, err))
+				logging.warning("Error occured while scoring sequence file %s :\n %s"%(seq_file, err))
 				return [float('nan')]
 			try:
 				with open(seq_file + ".fen") as f:
